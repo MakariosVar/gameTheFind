@@ -60,3 +60,6 @@ Route::get('games/imagesForm/{id}', [App\Http\Controllers\GamesController::class
 Route::get('testApp/start', [App\Http\Controllers\TestAppController::class, 'start']);
 Route::get('testApp/lose', [App\Http\Controllers\TestAppController::class, 'lose']);
 Route::get('testApp/random', [App\Http\Controllers\TestAppController::class, 'random']);
+
+// API
+Route::get('api/random', [App\Http\Controllers\TestAppController::class, 'randomApi']);
