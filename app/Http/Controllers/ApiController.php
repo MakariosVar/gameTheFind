@@ -64,11 +64,13 @@ class ApiController extends Controller
 
         if ($company->getUnamedLogo($company->id) !== null) {
             $image = $company->getUnamedLogo($company->id)['image_path'];
+            $imageReveal = $company->getOriginalLogo($company->id)[0]['image_path'];
         } else {
             return $this->companyLogo();
         }
 
         return response()->json([
+            'imageReveal' => $imageReveal,
             'companies' => $companiesArray,
             'selected' => $selected,
             'image' => $image
