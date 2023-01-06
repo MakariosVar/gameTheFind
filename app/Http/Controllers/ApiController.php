@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\Category;
 use App\Models\Game;
+use App\Models\Company;
 
 class ApiController extends Controller
 {
@@ -44,6 +45,31 @@ class ApiController extends Controller
         $image = $imageArray[rand(0 , count($imageArray) - 1)]->image_path;
         return response()->json([
             'games' => $gamesArray,
+            'selected' => $selected,
+            'image' => $image
+        ]);
+    }
+    public function companyLogo () {
+        $companies = Company::inRandomOrder()->limit(4)->get();
+        $companiesArray = $companies->toArray();
+        foreach($companiesArray as $key => $game) {
+            unset($companiesArray[$key]['updated_at']);            
+            unset($companiesArray[$key]['created_at']);            
+        }
+
+        $selectedCompany = array_rand($companiesArray);
+        $company = Company::find($companiesArray[$selectedCompany]['id']);
+
+        $selected = $companiesArray[$selectedCompany]['id'];
+
+        if ($company->getUnamedLogo($company->id) !== null) {
+            $image = $company->getUnamedLogo($company->id)['image_path'];
+        } else {
+            return $this->companyLogo();
+        }
+
+        return response()->json([
+            'companies' => $companiesArray,
             'selected' => $selected,
             'image' => $image
         ]);

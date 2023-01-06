@@ -24,7 +24,7 @@ class Company extends Model
     {
         if (!empty($logo = Image::where(['image_type' => Image::COMPANY_IMAGE])->where(['object_id' => $id])->get())) {
             if ($this->hasNameOnLogo == null) {
-                $this->getOriginalLogo();
+                $this->getOriginalLogo($id);
             } else {
                 if ($this->unnamed_logo_id != null) {
                     return Image::find($this->unnamed_logo_id)->toArray();

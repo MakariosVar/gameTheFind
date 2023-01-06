@@ -67,7 +67,5 @@ Route::get('testApp/random', [App\Http\Controllers\TestAppController::class, 'ra
 
 // API
 Route::get('api/random', [App\Http\Controllers\ApiController::class, 'random']);
+Route::get('api/companies', [App\Http\Controllers\ApiController::class, 'companyLogo']);
 Route::get('api/categories', [App\Http\Controllers\ApiController::class, 'categories']);
-
-$ea = ['cpv','cym','caf','tcd','chl','chn','hkg','mac','cxr','cck','col','com','cog','cod','cok','cri','civ','hrv','cub','cuw','cyp','cze','dnk','dji','dma','dom','ecu','egy','slv','gnq','eri','est','eth','flk','fro','fji','fin','fra','guf','pyf','atf','gab','gmb','geo','deu','gha','gib','grc','grl','grd','glp','gum','gtm','ggy','gin','gnb','guy','hti','hmd','vat','hnd','hun','isl','ind','idn','irn','irq','irl','imn','isr','ita','jam','jpn','jey','jor','kaz','ken','kir','prk','kor','kwt','kgz','lao','lva','lbn','lso','lbr','lby','lie','ltu','lux','mkd','mdg','mwi','mys','mdv','mli','mlt','mhl','mtq','mrt','mus','myt','mex','fsm','mda','mco','mng','mne','msr','mar','moz','mmr','nam','nru','npl','nld','ncl','nzl','nic','ner','nga','niu','nfk','mnp','nor','omn','pak','plw','pse','pan','png','pry','per','phl','pcn','pol','prt','pri','qat','reu','rou','rus','rwa','blm','shn','kna','lca','maf','spm','vct','wsm','smr','stp','sau','sen','srb','syc','sle','sgp','sxm','svk','svn','slb','som','zaf','sgs','ssd','sun','esp','lka','sdn','sur','sjm','swz','swe','che','syr','twn','tjk','tza','tha','tls','tgo','tkl','ton','tto','tun','tur','tkm','tca','tuv','uga','ukr','are','gbr','usa','umi','ury','uzb','vut','ven','vnm','vir','wlf','esh','yem','zmb',
-'zwe'];
