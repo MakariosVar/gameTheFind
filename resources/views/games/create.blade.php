@@ -33,12 +33,12 @@
                         {{-- CATEGORY --}}
                         <div id="Category" class="mt-3">
                             <label for="category">Select Category</label>
-                            <select class="categorySelect2 from-control" name="category" value="{{ old('category') }}">
+                            <select class="categorySelect2 from-control" name="category" value="{{ old('category') }}" multiple="multiple>
                                 @foreach($categories as $category)
-                                    @if ( old('category') == $category->id)
-                                        <option selected value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @if ( old('category') == $category['id'])
+                                        <option selected value="{{ $category['id'] }}">{{ $category['name'] }}</option>
                                     @else    
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category['id'] }}">{{ $category['name'] }}</option>
                                     @endif
                                 @endforeach
                                 </select>
@@ -60,7 +60,7 @@
                         {{-- Companies --}}
                         <div id="Companies" class="mt-3 d-flex flex-row-reverse align-items-center">
                             <label for="companies[]">Select Companies</label>
-                            <select class="categorySelect2 from-control w-75" name="companies[]"  multiple="multiple">
+                            <select class="tagsSelect2 from-control w-75" name="companies[]"  multiple="multiple">
                                 @foreach($companies as $company)
                                     @if ( old('companies') && in_array($company->id, old('companies')) )
                                         <option selected value="{{ $company->id }}">{{ $company->name }}</option>
@@ -78,9 +78,6 @@
                         </div>
                         <div class="checkbox mb-2">
                             <label><input type="checkbox" name="is2D" {{ old('is2D') == "on" ? 'checked' : '' }} > Game is 2D</label>
-                        </div>
-                        <div>
-                            <h6 class="text-center border border-danger rounded text-dark bg-warning">***Make sure that you complete all fields before select images****</h6>
                         </div>
                         <div id="image1" class="border rounded">
                             <!-- Upload image 1 input-->
@@ -333,8 +330,11 @@ $(document).ready(function() {
     $('.tagsSelect2').select2();
 });
 
+
 $(document).ready(function() {
-    $('.categorySelect2').select2();
+    $('.categorySelect2').select2({
+		 maximumSelectionLength: 1
+	});
 });
 </script>
 @endsection

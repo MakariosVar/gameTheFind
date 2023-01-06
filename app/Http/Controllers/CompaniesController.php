@@ -18,7 +18,7 @@ class CompaniesController extends Controller
     {
         $companies = Company::orderBy('id', 'desc')->get();
         foreach ($companies as $company) {
-            $company->logo = $company->getLogo($company->id);
+            $company->logo = $company->getOriginalLogo($company->id);
         }
         $companies->toArray();
         $query = false;
@@ -87,7 +87,8 @@ class CompaniesController extends Controller
     public function show($id)
     {
         $company = Company::find($id);
-        $company->logo = $company->getLogo($company->id);
+        $company->logo = $company->getOriginalLogo($company->id);
+        $company->logoUnamed = $company->getUnamedLogo($company->id);
         $games = $company->games();
         $company->toArray();
 
@@ -102,7 +103,8 @@ class CompaniesController extends Controller
     public function edit($id)
     {
         $company = Company::find($id);
-        $company->logo = $company->getLogo($company->id);
+        $company->logo = $company->getOriginalLogo($company->id);
+        $company->logoUnamed = $company->getUnamedLogo($company->id);
 
         return view('companies/edit', compact('company'));
     }
@@ -120,6 +122,7 @@ class CompaniesController extends Controller
             'id' => ['integer'],
             'companyName' => ['max:60'],
             'companyLogo' => ['image', 'nullable', 'max:2048'],
+            'companyLogoUnamed' => ['image', 'nullable', 'max:2048'],
             'hasNameOnLogo' => ['nullable']
         ]);
         $company = Company::find($data['id']);
@@ -133,10 +136,32 @@ class CompaniesController extends Controller
         } else {
             $company->hasNameOnLogo = false;
         }
-
+        $oldLogos = $company->getOriginalLogo($company->id);
+        $oldLogosUnamed = $company->getUnamedLogo($company->id);
         if (request('companyLogo')){
+            if ($oldLogos)
+            {
+                foreach ($oldLogos as $logo) {
+                    if ($company->unnamed_logo_id != $logo['id']) {
+                        $imageModel = Image::find($logo['id']);
+                        $imageModel->delete();
+                    }
+                }
+            }
             $imagePath = request('companyLogo')->store('uploads', 'public');
             $imageInervention = InterventionImage::make(public_path("storage/{$imagePath}"))->fit(1200, 1200);
+        }
+
+        if (request('companyLogoUnamed')){
+            // if ($oldLogosUnamed)
+            // {
+            //     foreach ($oldLogosUnamed as $logo) {
+            //         $imageModel = Image::find($logo['id']);
+            //         $imageModel->delete();
+            //     }
+            // }
+            $imagePathUnamed = request('companyLogoUnamed')->store('uploads', 'public');
+            $imageInerventionUnamed = InterventionImage::make(public_path("storage/{$imagePathUnamed}"))->fit(1200, 1200);
         }
         if ($company->save()) {
             if (isset($imageInervention)) {
@@ -145,12 +170,22 @@ class CompaniesController extends Controller
                 $image->image_path = $imagePath;
                 $image->image_type = Image::COMPANY_IMAGE;
                 $image->object_id = $company->id;
-                if ($image->save()) {
-                    return redirect('companies/view/'.$company->id);
+                $image->save();
                 }
             }
+            if (isset($imageInerventionUnamed)) {
+                $imageInerventionUnamed->save();
+                $image = new Image;
+                $image->image_path = $imagePathUnamed;
+                $image->image_type = Image::COMPANY_IMAGE;
+                $image->object_id = $company->id;
+                if ($image->save()) {
+                    $company->unnamed_logo_id = $image->id;
+                    $company->save();
+                }
+
+            }
         return redirect('companies/view/'.$company->id);
-        }
     }
 
     /**
@@ -178,7 +213,7 @@ class CompaniesController extends Controller
         $allcompanies = Company::all();
         
         foreach ($allcompanies as $company) {
-            $company->logo = $company->getLogo($company->id);
+            $company->logo = $company->getOriginalLogo($company->id);
             if (str_contains(strtolower($company["name"]), $query)) {
                 $companies[] = $company;
             }

@@ -55,10 +55,23 @@
                         </div>
                         <div class="col text-start">
                             @foreach ($games as $game)
-                                <a href="/games/view/{{ $game['id'] }}">{{ $game['name'] }}</a>,
+                            <a href="/games/view/{{ $game['id'] }}">{{ $game['name'] }}</a>,
                             @endforeach
                         </div>
                     </div>
+                    <div class="d-flex justify-content-center">
+                        <hr class="w-75">
+                    </div>
+                    @if ($company['logoUnamed'] && $company['hasNameOnLogo'])   
+                    <h5>Unamed Logo</h5>
+                    <div>
+                        <img 
+                            src="/storage/{{ $company['logoUnamed']['image_path'] }}" 
+                            alt="ela"
+                            class="w-25"
+                            >
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

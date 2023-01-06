@@ -9,10 +9,24 @@ class Company extends Model
 {
     use HasFactory;
 
-    public function getLogo($id)
+    public function getOriginalLogo($id)
     {
         if (!empty($logo = Image::where(['image_type' => Image::COMPANY_IMAGE])->where(['object_id' => $id])->get()->toArray())) {
             return $logo;
+        } else {
+            return "";
+        }
+    }
+    public function getUnamedLogo($id)
+    {
+        if (!empty($logo = Image::where(['image_type' => Image::COMPANY_IMAGE])->where(['object_id' => $id])->get())) {
+            if ($this->hasNameOnLogo == null) {
+                return $logo->toArray();
+            } else {
+                if ($this->unnamed_logo_id != null) {
+                    return Image::find($this->unnamed_logo_id)->toArray();
+                }
+            }
         } else {
             return "";
         }

@@ -35,26 +35,46 @@
                             <label for="companyName">Company name:</label>
                             <input type="text" placeholder="{{ $company->name }}" class="form-control text-center" name="companyName">
                         </div>
-                        <div class="col-lg-6 mx-auto p-2">
-
-                            <!-- Upload image input-->
+                        <div class="col-lg-8 mx-auto p-2 m-2 border rounded">
+    
+                            <!-- Upload image 1input-->
                             <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm">
-                                <input id="upload" type="file" name="companyLogo" onchange="readURL(this);" class="form-control border-0">
-                                <label id="upload-label" for="upload" class="font-weight-light text-muted">Choose Image</label>
+                                <input id="upload1" type="file" name="companyLogo" onchange="readURL1(this);" class="form-control border-0">
+                                <label id="upload-label1" for="upload" class="font-weight-light text-muted">Choose Image</label>
                                 <div class="input-group-append">
                                     <label for="upload" class="btn btn-light m-0 rounded-pill px-4"> <i class="fa fa-cloud-upload mr-2 text-muted"></i><small class="text-uppercase font-weight-bold text-muted">Browse...</small></label>
                                 </div>
                             </div>
                             <!-- Uploaded image area-->
                             @if(!empty($company->logo[0]))
-                                <div class="image-area"><img id="imageResult" src="/storage/{{ $company->logo[0]['image_path'] }}" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
+                                <div class="image-area"><img id="imageResult1" src="/storage/{{ $company->logo[0]['image_path'] }}" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
                             @else
-                                <div class="image-area"><img id="imageResult" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
+                                <div class="image-area"><img id="imageResult1" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
+                            @endif
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" @if($company->hasNameOnLogo) checked @endif name="hasNameOnLogo"> Image contains the company name</label>
+                    </div>
+                    @if ($company->hasNameOnLogo)
+                        <hr>
+                        <h3><u>Logo without Name</u></h3>
+                        <div class="col-lg-8 mx-auto p-2 border rounded">
+                            <!-- Upload image 2input-->
+                            <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm">
+                                <input id="upload2" type="file" name="companyLogoUnamed" onchange="readURL2(this);" class="form-control border-0">
+                                <label id="upload-label2" for="upload2" class="font-weight-light text-muted">Choose Image</label>
+                                <div class="input-group-append">
+                                    <label for="upload2" class="btn btn-light m-0 rounded-pill px-4"> <i class="fa fa-cloud-upload mr-2 text-muted"></i><small class="text-uppercase font-weight-bold text-muted">Browse...</small></label>
+                                </div>
+                            </div>
+                            <!-- Uploaded image area-->
+                            @if(!empty($company->logoUnamed))
+                                <div class="image-area"><img id="imageResult2" src="/storage/{{ $company->logoUnamed['image_path'] }}" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
+                            @else
+                                <div class="image-area"><img id="imageResult2" src="#" alt="" class="img-fluid rounded shadow-sm mx-auto d-block"></div>
                             @endif
                         </div>
-                        <div class="checkbox">
-                            <label><input type="checkbox" @if($company->hasNameOnLogo) checked @endif name="hasNameOnLogo"> Image contains the company name</label>
-                        </div>
+                    @endif
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
                 </div>
@@ -66,12 +86,23 @@
     /*  ==========================================
     SHOW UPLOADED IMAGE
 * ========================================== */
-function readURL(input) {
+function readURL1(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            $('#imageResult')
+            $('#imageResult1')
+                .attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+function readURL2(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#imageResult2')
                 .attr('src', e.target.result);
         };
         reader.readAsDataURL(input.files[0]);
@@ -79,22 +110,33 @@ function readURL(input) {
 }
 
 $(function () {
-    $('#upload').on('change', function () {
-        readURL(input);
+    $('#upload1').on('change', function () {
+        readURL1(input1);
+    });
+    $('#upload2').on('change', function () {
+        readURL2(input2);
     });
 });
 
 /*  ==========================================
     SHOW UPLOADED IMAGE NAME
 * ========================================== */
-var input = document.getElementById( 'upload' );
-var infoArea = document.getElementById( 'upload-label' );
+var input1 = document.getElementById( 'upload1' );
+var infoArea1 = document.getElementById( 'upload-label1' );
+var input2 = document.getElementById( 'upload2' );
+var infoArea2 = document.getElementById( 'upload-label2' );
 
-input.addEventListener( 'change', showFileName );
-function showFileName( event ) {
-    var fileName = input.files[0].name;
+input1.addEventListener( 'change', showFileName1 );
+input2.addEventListener( 'change', showFileName2);
+function showFileName1( event ) {
+    var fileName = input1.files[0].name;
     var input = event.srcElement;
-    infoArea.textContent = 'File name: ' + fileName;
+    infoArea1.textContent = 'File name: ' + fileName;
+}
+function showFileName2( event ) {
+    var fileName = input2.files[0].name;
+    var input = event.srcElement;
+    infoArea2.textContent = 'File name: ' + fileName;
 }
 </script>
 @endsection

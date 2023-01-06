@@ -24,15 +24,4 @@ class TestAppController extends Controller
         
         return $view;
     }
-
-    public function randomApi(){
-        $games = Game::inRandomOrder()->limit(4)->get();
-        $gamesArray = $games->toArray();
-        $selected = array_rand($gamesArray);
-        
-        return response()->json([
-            'games' => $gamesArray,
-            'selected' => $selected,
-        ]);
-    }
 }

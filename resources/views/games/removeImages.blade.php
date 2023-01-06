@@ -31,37 +31,10 @@
         <div class="card m-2 text-center" style="width: 20rem;">
             <div class="card-body">
             <img class="w-100" src="/storage/{{$image['image_path']}}" alt="dsds">
-            <a href="" image-obj="{{json_encode($image)}}" class="delete-img btn btn-lg btn-danger mt-2">DELETE</a>
+            <a href="/games/removeimages/{{$image['id']}}" class="delete-img btn btn-lg btn-danger mt-2">DELETE</a>
         </div>
         </div>
         @endforeach
     </div>
 </div>
-<script type="application/javascript">
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $('[image-obj]').on('click', function(e) {
-        e.preventDefault();
-        var image = $(this).attr("image-obj");
-        console.log(image)
-        if (confirm('This image is gonna be deleted. \nAre you sure?'))
-        {
-            $.ajax({
-                type: "post",
-                url: "/games/removeimages",
-                data: image,
-                success: function (response) {
-                    if (response == "Success") {
-                        location.reload();
-                    }
-                    alert('something goes wrong, try refresh the page');
-                }
-            });
-        }
-    })
-</script>
 @endsection

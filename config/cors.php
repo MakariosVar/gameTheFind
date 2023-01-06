@@ -19,9 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => ['*', 'http://0.0.0.0:8080', 'https://0.0.0.0:8080/', 'http://192.168.1.222:8080', 'https://192.168.1.222:8080'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => ['/https?:\/\/0.0.0.0:8080\/?\z/', '/https?:\/\/192.168.1.222:8080\/?\z/'],
 
     'allowed_headers' => ['*'],
 

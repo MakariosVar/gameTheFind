@@ -47,7 +47,8 @@ class GamesController extends Controller
     public function create()
     {
         $tags = Tag::all();
-        $categories = Category::all();
+        $categories = Category::all()->toArray();
+        array_unshift($categories, ['id' => null , 'name' => 'stauros']);
         $companies = Company::all();
         return view('/games/create', compact('tags', 'categories', 'companies'));
     }
@@ -375,21 +376,18 @@ class GamesController extends Controller
      * Remove images from games.
      *
      */
-    public function removeimages(Request $request)
+    public function removeimages($id)
     {
-        $data =  array_keys($request->input());
-        $imagePosted = json_decode($data[0]);
-        $id = $imagePosted->id;
         $image = Image::find($id);
-        $image->image_path =  strtr($image->image_path ,'_', '.');
+        $gameId = $image->object_id; 
         if(File::exists(public_path("storage/{$image->image_path}"))) {
             File::delete(public_path("storage/{$image->image_path}"));
             $image->delete();
-            return "Success";
-        } else {
-            return "Image Not Found";
         }
-        return;
+        $game = Game::find($gameId);
+        $images = $game->getAllImage($gameId);
+
+        return view('games/removeImages', compact('images', 'game')); 
     }
 
     /**
@@ -421,7 +419,7 @@ class GamesController extends Controller
         
         foreach ($allgames as $game) {
             $game->logo = $game->getFirstImage();
-            if($categoryQuery) {
+            if($categoryQuery != "null") {
                 if (str_contains(strtolower($game["name"]), $nameQuery) && $game["category_id"] == $categoryQuery) {
                     $games[] = $game;
                 }

@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
-    
+</div>    
 <script type="application/javascript">
     var round = localStorage.getItem('round'); 
     var score = localStorage.getItem('score'); 

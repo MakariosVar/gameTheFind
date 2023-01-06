@@ -13,7 +13,7 @@
                     @if ($nameQuery)
                         <h3 class="text-center">Searching key: {{$nameQuery}}</h3>
                     @endif
-                    @if ($categoryQuery)
+                    @if ($categoryQuery != "null")
                         <h5 class="text-center">Category: {{ $category->name }}</h5>
                     @endif
                     <h6 class="text-center">
@@ -29,6 +29,7 @@
                         </div>
                         <div class="input-group input-group-sm text-center d-flex justify-content-center">
                             <select class="categorySelect2 from-control" name="categoryQuery" onchange="this.form.submit()">
+                                <option value="null" selected>Select Category</option>
                                 @foreach ($categories as $category)
                                     @if ($category->id == $categoryQuery)
                                         <option selected value="{{$category->id}}">{{ $category->name }}</option>
