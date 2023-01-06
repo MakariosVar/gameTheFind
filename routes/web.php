@@ -69,3 +69,8 @@ Route::get('testApp/random', [App\Http\Controllers\TestAppController::class, 'ra
 Route::get('api/random', [App\Http\Controllers\ApiController::class, 'random']);
 Route::get('api/companies', [App\Http\Controllers\ApiController::class, 'companyLogo']);
 Route::get('api/categories', [App\Http\Controllers\ApiController::class, 'categories']);
+    /* decades */
+    Route::get('api/decade/90', [App\Http\Controllers\ApiController::class, 'decade90']);
+    Route::get('api/decade/00', [App\Http\Controllers\ApiController::class, 'decade00']);
+    Route::get('api/decade/10', [App\Http\Controllers\ApiController::class, 'decade10']);
+    Route::get('api/decade/20', [App\Http\Controllers\ApiController::class, 'decade20']);
