@@ -47,6 +47,7 @@ class CompaniesController extends Controller
         $data = request()->validate([
             'companyName' => ['required', 'max:60'],
             'companyLogo' => ['image', 'nullable', 'max:2048'],
+            'companyLogoUnamed' => ['image', 'nullable', 'max:2048'],
             'hasNameOnLogo' => ['nullable']
         ]);
         
@@ -63,6 +64,12 @@ class CompaniesController extends Controller
             $imagePath = request('companyLogo')->store('uploads', 'public');
             $imageInervention = InterventionImage::make(public_path("storage/{$imagePath}"))->fit(1200, 1200);
         }
+
+        if (request('companyLogoUnamed')){
+            $imagePathUnamed = request('companyLogoUnamed')->store('uploads', 'public');
+            $imageInerventionUnamed = InterventionImage::make(public_path("storage/{$imagePathUnamed}"))->fit(1200, 1200);
+        }
+
         if ($company->save()) {
             if (isset($imageInervention)) {
                 $imageInervention->save();
@@ -70,8 +77,17 @@ class CompaniesController extends Controller
                 $image->image_path = $imagePath;
                 $image->image_type = Image::COMPANY_IMAGE;
                 $image->object_id = $company->id;
+                $image->save();
+            }
+            if (isset($imageInerventionUnamed)) {
+                $imageInerventionUnamed->save();
+                $image = new Image;
+                $image->image_path = $imagePathUnamed;
+                $image->image_type = Image::COMPANY_IMAGE;
+                $image->object_id = $company->id;
                 if ($image->save()) {
-                    return redirect('companies/view/'.$company->id);
+                    $company->unnamed_logo_id = $image->id;
+                    $company->save();
                 }
             }
         return redirect('companies/view/'.$company->id);
@@ -136,30 +152,13 @@ class CompaniesController extends Controller
         } else {
             $company->hasNameOnLogo = false;
         }
-        $oldLogos = $company->getOriginalLogo($company->id);
-        $oldLogosUnamed = $company->getUnamedLogo($company->id);
+
         if (request('companyLogo')){
-            if ($oldLogos)
-            {
-                foreach ($oldLogos as $logo) {
-                    if ($company->unnamed_logo_id != $logo['id']) {
-                        $imageModel = Image::find($logo['id']);
-                        $imageModel->delete();
-                    }
-                }
-            }
             $imagePath = request('companyLogo')->store('uploads', 'public');
             $imageInervention = InterventionImage::make(public_path("storage/{$imagePath}"))->fit(1200, 1200);
         }
-
+        
         if (request('companyLogoUnamed')){
-            // if ($oldLogosUnamed)
-            // {
-            //     foreach ($oldLogosUnamed as $logo) {
-            //         $imageModel = Image::find($logo['id']);
-            //         $imageModel->delete();
-            //     }
-            // }
             $imagePathUnamed = request('companyLogoUnamed')->store('uploads', 'public');
             $imageInerventionUnamed = InterventionImage::make(public_path("storage/{$imagePathUnamed}"))->fit(1200, 1200);
         }
@@ -170,21 +169,38 @@ class CompaniesController extends Controller
                 $image->image_path = $imagePath;
                 $image->image_type = Image::COMPANY_IMAGE;
                 $image->object_id = $company->id;
-                $image->save();
-                }
-            }
-            if (isset($imageInerventionUnamed)) {
-                $imageInerventionUnamed->save();
-                $image = new Image;
-                $image->image_path = $imagePathUnamed;
-                $image->image_type = Image::COMPANY_IMAGE;
-                $image->object_id = $company->id;
                 if ($image->save()) {
-                    $company->unnamed_logo_id = $image->id;
-                    $company->save();
+                    $logos = $company->getOriginalLogo($company->id);
+                    if ($logos) {
+                        foreach ($logos as $logo) {
+                            if ($company->unnamed_logo_id != $logo['id'] && $logo['id'] != $image->id) {
+                                $imageModel = Image::find($logo['id']);
+                                $imageModel->delete();
+                            }
+                        }
+                    }
                 }
-
             }
+        }
+        if (isset($imageInerventionUnamed)) {
+            $imageInerventionUnamed->save();
+            $image = new Image;
+            $image->image_path = $imagePathUnamed;
+            $image->image_type = Image::COMPANY_IMAGE;
+            $image->object_id = $company->id;
+            if ($image->save()) {
+                $oldLogosUnamed = $company->getUnamedLogo($company->id);
+                if ($oldLogosUnamed) {
+                    if ($oldLogosUnamed['id'] != $image->id) {
+                        $imageModel = Image::find($oldLogosUnamed['id']);
+                        $imageModel->delete();
+                    }
+                }
+                
+                $company->unnamed_logo_id = $image->id;
+                $company->save();
+            }
+        }
         return redirect('companies/view/'.$company->id);
     }
 

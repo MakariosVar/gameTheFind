@@ -11,7 +11,10 @@ class Company extends Model
 
     public function getOriginalLogo($id)
     {
-        if (!empty($logo = Image::where(['image_type' => Image::COMPANY_IMAGE])->where(['object_id' => $id])->get()->toArray())) {
+        if (!empty($logo = Image::where(['image_type' => Image::COMPANY_IMAGE])
+            ->where(['object_id' => $id])
+            ->where('id', '!=', $this->unnamed_logo_id)
+            ->get()->toArray())) {
             return $logo;
         } else {
             return "";
@@ -21,7 +24,7 @@ class Company extends Model
     {
         if (!empty($logo = Image::where(['image_type' => Image::COMPANY_IMAGE])->where(['object_id' => $id])->get())) {
             if ($this->hasNameOnLogo == null) {
-                return $logo->toArray();
+                $this->getOriginalLogo();
             } else {
                 if ($this->unnamed_logo_id != null) {
                     return Image::find($this->unnamed_logo_id)->toArray();
