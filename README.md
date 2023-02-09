@@ -3,9 +3,10 @@
 
 
 ## Project setup
-```
+<p>
 Create .env file in root folder as .env.example and set up your database and configuration of application. 
-```
+</p>
+
 
 ```
 composer update
